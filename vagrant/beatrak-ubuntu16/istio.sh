@@ -1,7 +1,7 @@
 echo "----------------------------------------"
 echo "- istio.sh"
 echo "----------------------------------------"
-if [[ "$(istioctl)" != *"something istio"* ]]; then
+if [[ "$(stioctl version)" != *"Version"* ]]; then
     echo "install istio"
     chmod -R a+rwx /usr/local/src
     cd /usr/local/src
