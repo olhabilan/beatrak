@@ -58,7 +58,12 @@ spec:
           - name: "BEACON_SIG_NUMBER"
             value: "{{ beacon-sig-number }}"
           - name: "BEACON_SIG_PS"
-
+{{#ifneq istio-approach true}}
+          - name: "LOCPICK_HTTP_PORT"
+            value: "50001"
+          - name: "ELASTIC_PORT"
+            value: "50003"
+{{/ifneq}}
 {{#ifeq istio-approach true}}
             value: "{{ beacon-sig-ps }}"
           - name: "LOCPICK_HTTP_HOST"

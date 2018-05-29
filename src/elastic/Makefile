@@ -1,6 +1,6 @@
 build:  k8s-build
 ifneq ($(ISTIO_APPROACH), true)
-	k8s-create-elastic-envoy-dep-hlsvc
+create: k8s-create-elastic-envoy-dep-hlsvc
 endif
 create: k8s-create-elastic-ss-hlsvc
 delete: k8s-delete-elastic-envoy-dep-hlsvc k8s-delete-elastic-ss-hlsvc

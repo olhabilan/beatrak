@@ -77,11 +77,16 @@ k8s-create-beacon-za: ZONE=za
 k8s-create-beacon-za: REPLICAS=1
 k8s-create-beacon-za: BEACON_SIG_NUMBER=-1
 k8s-create-beacon-za: BEACON_SIG_PS=5
+ifeq ($(ISTIO_APPROACH), true)
 k8s-create-beacon-za: 
 	${ROOT_SRC_DIR}/tools/templ.js --templ=beacon-ss-hlsvc.templ.yaml --data='{"istio-approach": $(ISTIO_APPROACH), "service-name" : "$(SERVICE_NAME)", "app" : "$(APP)", "replicas" : "$(REPLICAS)", "zone" : "$(ZONE)", "log-level" : "$(LOG_LEVEL)", "beacon-sig-number" : "$(BEACON_SIG_NUMBER)", "beacon-sig-ps": "$(BEACON_SIG_PS)" }' --file=${SERVICE_NAME}.yaml
 	/usr/local/src/istio-0.7.0/bin/istioctl kube-inject -f  ./beacon-za-ss-hlsvc.yaml |kubectl apply -f -
-
-
+endif
+ifneq ($(ISTIO_APPROACH), true)
+k8s-create-beacon-za: 
+	${ROOT_SRC_DIR}/tools/templ.js --templ=beacon-ss-hlsvc.templ.yaml --data='{"istio-approach": $(ISTIO_APPROACH), "service-name" : "$(SERVICE_NAME)", "app" : "$(APP)", "replicas" : "$(REPLICAS)", "zone" : "$(ZONE)", "log-level" : "$(LOG_LEVEL)", "beacon-sig-number" : "$(BEACON_SIG_NUMBER)", "beacon-sig-ps": "$(BEACON_SIG_PS)" }' --file=${SERVICE_NAME}.yaml
+	kubectl apply -f   ./beacon-za-ss-hlsvc.yaml
+endif
 
 k8s-delete-beacon-za: SERVICE_NAME=${TARGET}-ss-hlsvc
 k8s-delete-beacon-za:

@@ -101,9 +101,16 @@ k8s-create-stage1-cla: REPLICAS=1
 k8s-create-stage1-cla: LOG_LEVEL=error
 k8s-create-stage1-cla: CLUSTER=cla
 k8s-create-stage1-cla: ZONE=nozone
+ifeq ($(ISTIO_APPROACH), true)
 k8s-create-stage1-cla:
-	${ROOT_SRC_DIR}/tools/templ.js --templ=stage1-ss-hlsvc.templ.yaml --data='{"istio-approach": $(ISTIO_APPROACH), "service-name" : "$(SERVICE_NAME)", "cluster" : "$(CLUSTER)", "zone" : "$(ZONE)", "replicas" : "$(REPLICAS)", "log-level" : "$(LOG_LEVEL)", "app" : "$(APP)", "hostname" : "$(HOSTNAME)"}' --file=${SERVICE_NAME}.yaml
+	${ROOT_SRC_DIR}/tools/templ.js --templ=stage1-ss-hlsvc.templ.yaml --data='{"istio-approach": $(ISTIO_APPROACH),"service-name" : "$(SERVICE_NAME)", "cluster" : "$(CLUSTER)", "zone" : "$(ZONE)", "replicas" : "$(REPLICAS)", "log-level" : "$(LOG_LEVEL)", "app" : "${APP}", "hostname" : "$(HOSTNAME)"}' --file=${SERVICE_NAME}.yaml
 	/usr/local/src/istio-0.7.0/bin/istioctl kube-inject -f  ./${SERVICE_NAME}.yaml |kubectl apply -f -
+endif
+ifneq ($(ISTIO_APPROACH), true)
+k8s-create-stage1-cla: 
+	${ROOT_SRC_DIR}/tools/templ.js --templ=stage1-ss-hlsvc.templ.yaml --data='{"istio-approach": $(ISTIO_APPROACH),"service-name" : "$(SERVICE_NAME)", "cluster" : "$(CLUSTER)", "zone" : "$(ZONE)", "replicas" : "$(REPLICAS)", "log-level" : "$(LOG_LEVEL)", "app" : "${APP}", "hostname" : "$(HOSTNAME)"}' --file=${SERVICE_NAME}.yaml
+	kubectl apply -f   ./${SERVICE_NAME}.yaml
+endif
 
 k8s-delete-stage1-cla: SERVICE_NAME=stage1-cla-ss-hlsvc
 k8s-delete-stage1-cla:
@@ -132,10 +139,16 @@ k8s-create-stage1-clb: REPLICAS=1
 k8s-create-stage1-clb: LOG_LEVEL=error
 k8s-create-stage1-clb: CLUSTER=clb
 k8s-create-stage1-clb: ZONE=nozone
+ifeq ($(ISTIO_APPROACH), true)
 k8s-create-stage1-clb:
 	${ROOT_SRC_DIR}/tools/templ.js --templ=stage1-ss-hlsvc.templ.yaml --data='{"istio-approach": $(ISTIO_APPROACH),"service-name" : "$(SERVICE_NAME)", "cluster" : "$(CLUSTER)", "zone" : "$(ZONE)", "replicas" : "$(REPLICAS)", "log-level" : "$(LOG_LEVEL)", "app" : "${APP}", "hostname" : "$(HOSTNAME)"}' --file=${SERVICE_NAME}.yaml
 	/usr/local/src/istio-0.7.0/bin/istioctl kube-inject -f  ./${SERVICE_NAME}.yaml |kubectl apply -f -
-
+endif
+ifneq ($(ISTIO_APPROACH), true)
+k8s-create-stage1-clb:
+	${ROOT_SRC_DIR}/tools/templ.js --templ=stage1-ss-hlsvc.templ.yaml --data='{"istio-approach": $(ISTIO_APPROACH),"service-name" : "$(SERVICE_NAME)", "cluster" : "$(CLUSTER)", "zone" : "$(ZONE)", "replicas" : "$(REPLICAS)", "log-level" : "$(LOG_LEVEL)", "app" : "${APP}", "hostname" : "$(HOSTNAME)"}' --file=${SERVICE_NAME}.yaml
+	kubectl apply -f   ./${SERVICE_NAME}.yaml
+endif
 
 k8s-delete-stage1-clb: SERVICE_NAME=stage1-clb-ss-hlsvc
 k8s-delete-stage1-clb:

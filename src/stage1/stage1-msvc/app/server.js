@@ -91,7 +91,7 @@ if(typeof process.env.POSTGRES_HOST === 'undefined' || process.env.POSTGRES_HOST
 }
 
 if(typeof process.env.POSTGRES_PORT === 'undefined' || process.env.POSTGRES_PORT == "") {
-    console.log("env: POSTGRES_PORT is undefined, setting postgresPort to \"localhost\"");
+    console.log("env: POSTGRES_PORT is undefined, setting postgresPort to \"5050\"");
     gl.postgresPort = "50005"
 } else {
     gl.postgresPort = process.env.POSTGRES_PORT;

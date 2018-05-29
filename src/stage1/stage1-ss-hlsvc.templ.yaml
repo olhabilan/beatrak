@@ -2,7 +2,12 @@
 apiVersion: v1
 kind: Service
 metadata:
+    {{#ifneq istio true}}
+    name: {{ service-name}}
+    {{/ifneq}}
+    {{#ifeq istio true}}
     name: {{ app }}
+    {{/ifeq}}
     labels: 
       app: {{ app }}
 spec:
@@ -10,7 +15,18 @@ spec:
   - name: stage1-api
     port: 50006
     protocol: TCP
+    {{#ifeq istio true}}
     targetPort: 8080
+    {{/ifeq}}
+    {{#ifneq istio true}}
+    targetPort: 50006
+    {{/ifneq}}
+  - name: envoy-admin
+    port: 50011
+    protocol: TCP
+    targetPort: 50011
+  type: ClusterIP
+  clusterIP: None
   selector:
     app: {{ app }}
 ---
