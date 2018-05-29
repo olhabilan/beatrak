@@ -49,9 +49,8 @@ k8s-create-prod: LOG_LEVEL=error
 k8s-create-prod: SERVICE_NAME=locpick-dep-hlsvc
 k8s-create-prod: APP=locpick-dep-hlsvc
 k8s-create-prod:
-	${ROOT_SRC_DIR}/tools/templ.js --templ=locpick-dep-hlsvc.templ.yaml --data='{ "service-name" : "${SERVICE_NAME}", "app" : "${APP}", "log-level" : "${LOG_LEVEL}", "replicas" : ${REPLICAS} }' --file=locpick-dep-hlsvc.yaml
+	${ROOT_SRC_DIR}/tools/templ.js --templ=locpick-dep-hlsvc.templ.yaml --data='{ "istio-approach": ${ISTIO_APPROACH}, "service-name" : "${SERVICE_NAME}", "app" : "${APP}", "log-level" : "${LOG_LEVEL}", "replicas" : ${REPLICAS} }' --file=locpick-dep-hlsvc.yaml
 	kubectl create -f ./locpick-dep-hlsvc.yaml
-
 k8s-delete-prod:
 	kubectl delete -f ./locpick-dep-hlsvc.yaml
 
@@ -69,10 +68,9 @@ k8s-create-devshell: APP=locpick-devshell
 k8s-create-devshell: APP_VOLUME_PATH=${ROOT_SRC_DIR}/locpick/locpick-msvc/app
 k8s-create-devshell: COMMON_VOLUME_PATH=${ROOT_SRC_DIR}/common
 k8s-create-devshell:
-	${ROOT_SRC_DIR}/tools/templ.js --templ=locpick-devshell-pod.templ.yaml --data='{ "service-name" : "${SERVICE_NAME}", "app" : "${APP}", "log-level" : "${LOG_LEVEL}", "hostname" : "${HOSTNAME}", "app-volume-path" : "${APP_VOLUME_PATH}", "common-volume-path" : "${COMMON_VOLUME_PATH}" }' --file=locpick-devshell-pod.yaml
+	${ROOT_SRC_DIR}/tools/templ.js --templ=locpick-devshell-pod.templ.yaml --data='{ "istio-approach": ${ISTIO_APPROACH}, "service-name" : "${SERVICE_NAME}", "app" : "${APP}", "log-level" : "${LOG_LEVEL}", "hostname" : "${HOSTNAME}", "app-volume-path" : "${APP_VOLUME_PATH}", "common-volume-path" : "${COMMON_VOLUME_PATH}" }' --file=locpick-devshell-pod.yaml
 	kubectl create -f ./locpick-devshell-pod.yaml
-
-k8s-delete-devshell: 
+k8s-delete-devshell:
 	kubectl delete -f ./locpick-devshell-pod.yaml
 
 # run [beatrak/locpick-devshell]# /start-dev.sh"

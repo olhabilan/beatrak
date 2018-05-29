@@ -2,9 +2,23 @@
 
 var handlebars  = require("handlebars");
 var handlebarsIntl  = require("handlebars-intl");
-handlebarsIntl.registerWith(handlebars);
 var yargs = require("yargs");
 var fs = require("fs");
+handlebars.registerHelper('ifeq', function(v1, v2, options) {
+	if(v1 === v2) {
+	  return options.fn(this);
+	}
+	return options.inverse(this);
+  });
+handlebars.registerHelper('ifneq', function(v1, v2, options) {
+	if(v1 != v2) {
+	  return options.fn(this);
+	}
+	return options.inverse(this);
+});
+
+handlebarsIntl.registerWith(handlebars);
+
 require("dotenv").config();
 
 console.log("templ.js: starting...");

@@ -27,7 +27,8 @@ var SERVICE_NAME;
 var CLUSTER;
 var ZONE;
 var LOG_LEVEL;
-
+var gl = {}
+gl.signal = {};
 //
 // first init output to console.log on purpose
 // we should always print out the settings
@@ -48,7 +49,23 @@ if(typeof process.env.SERVICE_NAME === 'undefined' || process.env.SERVICE_NAME =
     SERVICE_NAME = process.env.SERVICE_NAME;
     console.log("env: SERVICE_NAME = " + SERVICE_NAME);
 }
- 
+
+if(typeof process.env.STAGE1_HTTP_PORT === 'undefined' || process.env.STAGE1_HTTP_PORT == "") {
+	gl.stage1HttpPort = 8080
+	console.log("log: stage1.js: initEnv(): STAGE1_HTTP_PORT is undefined, gl.stage1HttpPort = " + gl.stage1HttpPort)
+} else {
+	gl.stage1HttpPort = process.env.STAGE1_HTTP_PORT
+	console.log("log: stage1.js: initEnv(): gl.stage1HttpPort = " + gl.stage1HttpPort)
+}
+
+if(typeof process.env.STAGE1_HTTP_HOST === 'undefined' || process.env.STAGE1_HTTP_HOST == "") {
+	gl.stage1HttpHost = "localhost"
+	console.log("log: stage1.js: initEnv(): STAGE1_HTTP_HOST is undefined, gl.stage1HttpHost = " + gl.stage1HttpHost)
+} else {
+	gl.stage1HttpHost = process.env.STAGE1_HTTP_HOST
+	console.log("log: stage1.js: initEnv(): gl.stage1HttpHost = " + gl.stage1HttpHost)
+}
+
 if(typeof process.env.ZONE === 'undefined' || process.env.ZONE == "") {
     console.log("env: ZONE is undefined, setting ZONE to \"nozone\"");
     ZONE = "nozone"
@@ -64,8 +81,24 @@ if(typeof process.env.CLUSTER === 'undefined' || process.env.CLUSTER == "") {
     CLUSTER = process.env.CLUSTER;
     console.log("env: CLUSTER = " + CLUSTER);
 }
-  
-// 
+
+if(typeof process.env.POSTGRES_HOST === 'undefined' || process.env.POSTGRES_HOST == "") {
+    console.log("env: POSTGRES_HOST is undefined, setting postgresHost to \"localhost\"");
+    gl.postgresHost = "localhost"
+} else {
+    gl.postgresHost = process.env.POSTGRES_HOST;
+    console.log("env: POSTGRES_HOST = " + gl.postgresHost);
+}
+
+if(typeof process.env.POSTGRES_PORT === 'undefined' || process.env.POSTGRES_PORT == "") {
+    console.log("env: POSTGRES_PORT is undefined, setting postgresPort to \"localhost\"");
+    gl.postgresPort = "50005"
+} else {
+    gl.postgresPort = process.env.POSTGRES_PORT;
+    console.log("env: POSTGRES_PORT = " + gl.postgresPort);
+}
+
+//
 // CONST
 //
 // elastic does not like - so for beacon that writes to elastic replace it
@@ -77,8 +110,7 @@ const sid = SERVICE_NAME.replace(/-/gi,"-") + "-" + Math.random().toString(36).s
 //
 // GLOBAL
 //
-var gl = {}
-gl.signal = {};
+
 // postgresql client
 
 // App 
@@ -94,8 +126,8 @@ const init = (async () => {
 //		host: '10.99.149.235',
 //		host: 'localhost',
 //		host: 'postgresql-svc.default.svc.cluster.local',
-		host: '127.0.0.1', 
-		port: 50005
+		host: gl.postgresHost, 
+		port: gl.postgresPort
  	    });
 
 	    await gl.pg.connect();
@@ -157,8 +189,8 @@ const init = (async () => {
     await init();
     log.debug(m("main(): after init()"));
 
-    app.listen(common.LOCAL_SERVER_PORT, common.HOST);
-    log.debug(m(`main(): SERVER: ${SERVICE_NAME} server on http://${common.HOST}:${common.LOCAL_SERVER_PORT}`));
+    app.listen(gl.stage1HttpPort, gl.stage1HttpHost);
+    log.debug(m(`main(): SERVER: ${SERVICE_NAME} server on http://${gl.stage1HttpHost}:${gl.stage1HttpPort}`));
 
 })();
 

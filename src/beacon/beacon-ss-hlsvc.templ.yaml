@@ -6,10 +6,18 @@ metadata:
       app: "{{ app }}"
 spec:
   ports:
+{{#ifeq istio-approach true}}
+  - name: locpick-api
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+{{/ifeq}}
+{{#ifneq istio-approach true}}
   - name: locpick-api
     port: 50002
     protocol: TCP
     targetPort: 50002
+{{/ifneq}}
   - name: envoy-admin
     port: 50011
     protocol: TCP
@@ -41,16 +49,36 @@ spec:
         image: beatrak/beacon
         imagePullPolicy: IfNotPresent
         env:
-        - name: "LOG_LEVEL"
-          value: "{{ log-level }}"
-        - name: "SERVICE_NAME"
-          value: "{{ service-name }}"
-        - name: "ZONE"
-          value: "{{ zone }}"
-        - name: "BEACON_SIG_NUMBER"
-          value: "{{ beacon-sig-number }}"
-        - name: "BEACON_SIG_PS"
-          value: "{{ beacon-sig-ps }}"
+          - name: "LOG_LEVEL"
+            value: "{{ log-level }}"
+          - name: "SERVICE_NAME"
+            value: "{{ service-name }}"
+          - name: "ZONE"
+            value: "{{ zone }}"
+          - name: "BEACON_SIG_NUMBER"
+            value: "{{ beacon-sig-number }}"
+          - name: "BEACON_SIG_PS"
+
+{{#ifeq istio-approach true}}
+            value: "{{ beacon-sig-ps }}"
+          - name: "LOCPICK_HTTP_HOST"
+            value: "locpick-dep-hlsvc"
+          - name: "LOCPICK_GRPC_HOST"
+            value: "locpick-dep-hlsvc"
+          - name: "LOCPICK_HTTP_PORT"
+            value: "8080"
+          - name: "LOCPICK_GRPC_PORT"
+            value: "8085"
+          - name: "BEACON_HTTP_PORT"
+            value: "8080"
+          - name: "ELASTIC_HOST"
+            value: "elastic-ss-hlsvc"
+          - name: "STAGE1_HOST"
+            value: "stage1-ss-hlsvc"
+          - name: "STAGE1_PORT"
+            value: "50006"
+{{/ifeq}}
+{{#ifneq istio-approach true}}
       - name: envoy
         image: beatrak/beacon-envoy
         imagePullPolicy: IfNotPresent
@@ -61,3 +89,4 @@ spec:
           - containerPort: 50011
             name: envoy-admin
             protocol: TCP
+{{/ifneq}}

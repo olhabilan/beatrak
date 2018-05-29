@@ -23,8 +23,8 @@ const m = utils.m;
 // GLOBAL
 //
 var gl = {}
-const PROTO_PATH = __dirname + "/../../../protos"
-const KEY_PATH = __dirname + "/../../../keys"
+const PROTO_PATH = __dirname + "/../protos"
+const KEY_PATH = __dirname + "/../keys"
 const locpickProto = grpc.load(PROTO_PATH+"/locpick.proto").locpick
  
 //
@@ -69,7 +69,7 @@ const grpcPing = (call, callback) => {
 
 const initEnv = () => {
     if(typeof process.env.LOG_LEVEL === 'undefined' || process.env.LOG_LEVEL == "" ) {
-	gl.logLevel = "error"
+	gl.logLevel = "debug"
 	console.log("log: locpick.js: initEnv(): LOG_LEVEL is undefined, gl.logLevel = ", gl.logLevel)
     } else {
 	gl.logLevel = process.env.LOG_LEVEL

@@ -1,5 +1,8 @@
 build:  k8s-build
-create: k8s-create-elastic-envoy-dep-hlsvc k8s-create-elastic-ss-hlsvc
+ifneq ($(ISTIO_APPROACH), true)
+	k8s-create-elastic-envoy-dep-hlsvc
+endif
+create: k8s-create-elastic-ss-hlsvc
 delete: k8s-delete-elastic-envoy-dep-hlsvc k8s-delete-elastic-ss-hlsvc
 shell: k8s-elastic-shell
 
@@ -19,7 +22,7 @@ k8s-create-elastic-ss-hlsvc-create-master-node:
 	kubectl create -f ./elastic-ss-hlsvc.yaml
 
 k8s-create-elastic-ss-hlsvc-waitfor-master-node-ip:
-	@echo "wait for elastcip master node ip"
+	@echo "wait for elastic master node ip"
 	@echo "sleep for 5s..."
 	@sleep 5
 

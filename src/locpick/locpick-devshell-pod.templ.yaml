@@ -15,11 +15,24 @@ spec:
         value: "{{ log-level }}"
       - name: "SERVICE_NAME"
         value: "{{ service-name }}"
+    ports:
+      - containerPort: 8080
+        name: locpick-api
+        protocol: TCP
     volumeMounts:
       - mountPath: /root/app
         name: app-volume
       - mountPath: /root/common
         name: common-volume
+  volumes:
+    - name: app-volume
+      hostPath:
+        path: {{ app-volume-path }}
+    - name: common-volume
+      hostPath:
+        path: {{ common-volume-path }}
+  nodeSelector:
+    kubernetes.io/hostname: {{ hostname }}
   - name: locpick-envoy-devshell
     image: beatrak/locpick-envoy
     imagePullPolicy: IfNotPresent
@@ -31,15 +44,7 @@ spec:
       - containerPort: 50011
         name: envoy-admin
         protocol: TCP
-  volumes:
-    - name: app-volume
-      hostPath:
-        path: {{ app-volume-path }}
-    - name: common-volume
-      hostPath:
-        path: {{ common-volume-path }}
-  nodeSelector:
-    kubernetes.io/hostname: {{ hostname }}
+
 
 
 

@@ -1,7 +1,8 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
-    name: {{ service-name }}
+    name: {{ app }}
     labels: 
       app: {{ app }}
 spec:
@@ -9,18 +10,10 @@ spec:
   - name: stage1-api
     port: 50006
     protocol: TCP
-    targetPort: 50006
-  - name: envoy-admin
-    port: 50011
-    protocol: TCP
-    targetPort: 50011
-  type: ClusterIP
-  clusterIP:  None
+    targetPort: 8080
   selector:
     app: {{ app }}
-
 ---
-
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
@@ -35,6 +28,7 @@ spec:
     metadata:
       labels:
         app: {{ app }}
+        clusterId: {{ cluster }}
         dev: dev
     spec:
       containers:
@@ -50,6 +44,15 @@ spec:
             value: {{ cluster }}
           - name: "ZONE"
             value: {{ zone }}
+{{#ifeq istio-approach true}}
+          - name: "POSTGRES_HOST"
+            value: "postgresql-dep-svc"
+{{/ifeq}}
+        ports:
+        - containerPort: 8080
+          name: stage1-api
+          protocol: TCP
+{{#ifneq istio-approach true}}
       - name: envoy
         image: beatrak/stage1-envoy
         imagePullPolicy: IfNotPresent
@@ -60,6 +63,7 @@ spec:
         - containerPort: 50011
           name: envoy-admin
           protocol: TCP
+{{/ifneq}}
 
 
 

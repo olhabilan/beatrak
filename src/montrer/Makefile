@@ -75,7 +75,8 @@ k8s-create-prod: LOG_LEVEL=error
 k8s-create-prod: SERVICE_NAME=montrer-ss-hlsvc
 k8s-create-prod: APP=${SERVICE_NAME}
 k8s-create-prod: 
-	${ROOT_SRC_DIR}/tools/templ.js --templ=${SERVICE_NAME}.templ.yaml --data='{ "service-name" : "$(SERVICE_NAME)", "app" : "${APP}", "zone" : "${ZONE}", "cluster" : "$(CLUSTER)", "log-level" : "$(LOG_LEVEL)", "replicas" : "${REPLICAS}", "hostname" : "${NODE}", "app-volume-path" : "${APP_VOLUME_PATH}", "common-volume-path" : "${COMMON_VOLUME_PATH}" }' --file=${SERVICE_NAME}.yaml
+
+	${ROOT_SRC_DIR}/tools/templ.js --templ=${SERVICE_NAME}.templ.yaml --data='{"extSvcNodePort": "${EXT_SVC_NODEPORT}", "extSvcExtIP": "${EXT_SVC_IP}", "service-name" : "$(SERVICE_NAME)", "app" : "${APP}", "zone" : "${ZONE}", "cluster" : "$(CLUSTER)", "log-level" : "$(LOG_LEVEL)", "replicas" : "${REPLICAS}", "hostname" : "${NODE}", "app-volume-path" : "${APP_VOLUME_PATH}", "common-volume-path" : "${COMMON_VOLUME_PATH}" }' --file=${SERVICE_NAME}.yaml
 	kubectl create -f ./${SERVICE_NAME}.yaml
 
 k8s-delete-prod: SERVICE_NAME=montrer-ss-hlsvc

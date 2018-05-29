@@ -8,6 +8,7 @@ export EXT_SVC_NODEPORT :=
 #    Ex: "make ... EXT_SVC_IP=10.138.0.21"
 export EXT_SVC_IP := 10.0.2.15
 
+export ISTIO_APPROACH := true
 all:
 
 
@@ -36,11 +37,13 @@ create-all:
 	-$(MAKE) postgresql-gen
 	-$(MAKE) grafana-create
 	-$(MAKE) locpick-create
-	-$(MAKE) beacon-create-za
 	-$(MAKE) stage1-create-cla
 	-$(MAKE) stage1-create-clb
-	-$(MAKE) montrer-envoy-create
 	-$(MAKE) montrer-create
+	-$(MAKE) beacon-create-za
+ifneq ($(ISTIO_APPROACH), true)
+	-$(MAKE) montrer-envoy-create
+endif
 
 test-all:
 	-$(MAKE) test-api

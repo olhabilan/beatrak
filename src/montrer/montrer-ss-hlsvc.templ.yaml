@@ -18,8 +18,11 @@ spec:
     port: 50011
     protocol: TCP
     targetPort: 50011
-  type: ClusterIP
-  clusterIP:  None
+  {{#if extSvcNodePort}}type: NodePort{{/if}}
+  {{#if extSvcExtIP}}
+  externalIPs:
+    - {{extSvcExtIP}}
+  {{/if}}
   selector:
     app: {{ app }}
 
